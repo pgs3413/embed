@@ -1,5 +1,5 @@
-#include <linux/module.h>  
-#include <linux/types.h>  
+#include <linux/module.h>  //module_init module_exit
+#include <linux/types.h>  //dev_t
 #include <linux/fs.h>  
 #include <linux/errno.h>  
 #include <linux/mm.h>  
@@ -71,7 +71,7 @@ static int globalmem_ioctl( struct file *filp, unsigned
 }  
   
 
-static ssize_t globalmem_read(struct file *filp, char __user *buf, size_t size,  
+static ssize_t globalmem_read(struct file *filp, char __user *buf, size_t size,  //
   loff_t *ppos)  
 {  
   unsigned long p =  *ppos;  
@@ -172,7 +172,7 @@ static loff_t globalmem_llseek(struct file *filp, loff_t offset, int orig)
 }  
   
 
-static const struct file_operations globalmem_fops =  
+static const struct file_operations globalmem_fops =  //将各个函数挂载在file_operation结构体中
 {  
   .owner = THIS_MODULE,  
   .llseek = globalmem_llseek,  
@@ -200,11 +200,12 @@ static void globalmem_setup_cdev(struct globalmem_dev *dev, int index)
 int globalmem_init(void)  
 {  
   int result;  
-  dev_t devno = MKDEV(globalmem_major, 0);  
+  dev_t devno = MKDEV(globalmem_major, 0);  // dev_t 设备号类型
   
 
   if (globalmem_major)  
-    result = register_chrdev_region(devno, 1, "globalmem");  
+    result = register_chrdev_region(devno, 1, "globalmem");  //向系统注册字符设备
+	//register_chrdev（major,name,file_operation);
   else    
   {  
     result = alloc_chrdev_region(&devno, 0, 1, "globalmem");  
@@ -237,14 +238,14 @@ int globalmem_init(void)
 void globalmem_exit(void)  
 {  
   cdev_del(&globalmem_devp->cdev);   
-  kfree(globalmem_devp);      
-  unregister_chrdev_region(MKDEV(globalmem_major, 0), 1); 
+  kfree(globalmem_devp);     
+  unregister_chrdev_region(MKDEV(globalmem_major, 0), 1); //注销字符设备
   printk("globalmem driver uninstalled!\n");  
 }  
   
-MODULE_AUTHOR("Song Baohua");  
-MODULE_LICENSE("Dual BSD/GPL");  
+MODULE_AUTHOR("xxxx");  	//可不要
+MODULE_LICENSE("Dual BSD/GPL");  //必须要加开源证书
     
   
-module_init(globalmem_init);  
-module_exit(globalmem_exit);  
+module_init(globalmem_init);  //insmod 时执行globalmem_init
+module_exit(globalmem_exit);  //rmmod 时执行globalmem_exit
