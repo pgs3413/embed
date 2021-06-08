@@ -188,10 +188,10 @@ static void globalmem_setup_cdev(struct globalmem_dev *dev, int index)
 {  
   int err, devno = MKDEV(globalmem_major, index);  
   
-  cdev_init(&dev->cdev, &globalmem_fops);  
+  cdev_init(&dev->cdev, &globalmem_fops);  //建立cdev和file_opration之间的连接
   dev->cdev.owner = THIS_MODULE;  
-  dev->cdev.ops = &globalmem_fops;  
-  err = cdev_add(&dev->cdev, devno, 1);  
+  dev->cdev.ops = &globalmem_fops;  //cdev_init有此步奏
+  err = cdev_add(&dev->cdev, devno, 1);  //向系统添加一个cdev以完成注册
   if (err)  
     printk(KERN_NOTICE "Error %d adding LED%d", err, index);  
 }  
@@ -204,7 +204,7 @@ int globalmem_init(void)
   
 
   if (globalmem_major)  
-    result = register_chrdev_region(devno, 1, "globalmem");  //向系统注册字符设备
+    result = register_chrdev_region(devno, 1, "globalmem");  //向系统注册字符设备号
 	//register_chrdev（major,name,file_operation);
   else    
   {  
@@ -237,9 +237,9 @@ int globalmem_init(void)
 
 void globalmem_exit(void)  
 {  
-  cdev_del(&globalmem_devp->cdev);   
+  cdev_del(&globalmem_devp->cdev);   //注销cdev
   kfree(globalmem_devp);     
-  unregister_chrdev_region(MKDEV(globalmem_major, 0), 1); //注销字符设备
+  unregister_chrdev_region(MKDEV(globalmem_major, 0), 1); //注销字符设备号
   printk("globalmem driver uninstalled!\n");  
 }  
   
