@@ -1,0 +1,36 @@
+<html>
+ <head><title>web text</title></head>
+
+<button id="btn1"
+	style="width:200px;height:120px;font-size:40px;"onclick="btn1_click()">add</button>
+<button id="btn2"
+	style="width:200px;height:120px;font-size:40px;"onclick="btn2_click()">cut</button>
+<script>
+
+	var level=0;
+
+	function btn1_click(){
+	if(level == 2 ) return;
+	level++;
+	var url="cgi-bin/set";
+	var request = new XMLHttpRequest();
+	request.open("POST",url);
+	request.send(level);
+}
+function btn2_click(){
+	if(level == 0) return;
+	level--;
+	var url="cgi-bin/set";
+	var request = new XMLHttpRequest();
+	request.open("POST",url);
+	request.send(level);
+	}
+	function init(){
+	var url="cgi-bin/set";
+	var request = new XMLHttpRequest();
+	request.open("POST",url);
+	request.send(level);
+}
+init();
+</script>
+</html>
